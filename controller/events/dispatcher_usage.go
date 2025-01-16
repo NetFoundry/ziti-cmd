@@ -22,6 +22,7 @@ import (
 	"github.com/openziti/ziti/controller/event"
 	"github.com/pkg/errors"
 	"reflect"
+	"time"
 )
 
 func (self *Dispatcher) AddUsageEventHandler(handler event.UsageEventHandler) {
@@ -48,7 +49,7 @@ func (self *Dispatcher) RemoveUsageEventV3Handler(handler event.UsageEventV3Hand
 	})
 }
 
-func (self *Dispatcher) AcceptUsageEvent(event *event.UsageEvent) {
+func (self *Dispatcher) AcceptUsageEvent(event *event.UsageEventV2) {
 	go func() {
 		for _, handler := range self.usageEventHandlers.Value() {
 			handler.AcceptUsageEvent(event)
@@ -150,10 +151,11 @@ func (self *usageEventAdapter) AcceptMetricsMsg(message *metrics_pb.MetricsMessa
 		for name, interval := range message.IntervalCounters {
 			for _, bucket := range interval.Buckets {
 				for circuitId, usage := range bucket.Values {
-					evt := &event.UsageEvent{
-						Namespace:        event.UsageEventsNs,
-						Version:          event.UsageEventsVersion,
+					evt := &event.UsageEventV2{
+						Namespace:        event.UsageEventNS,
 						EventSrcId:       self.dispatcher.ctrlId,
+						Timestamp:        time.Now(),
+						Version:          event.UsageEventsVersion,
 						EventType:        name,
 						SourceId:         message.SourceId,
 						CircuitId:        circuitId,
@@ -168,11 +170,12 @@ func (self *usageEventAdapter) AcceptMetricsMsg(message *metrics_pb.MetricsMessa
 		for _, interval := range message.UsageCounters {
 			for circuitId, bucket := range interval.Buckets {
 				for usageType, usage := range bucket.Values {
-					evt := &event.UsageEvent{
-						Namespace:        event.UsageEventsNs,
+					evt := &event.UsageEventV2{
+						Namespace:        event.UsageEventNS,
+						EventSrcId:       self.dispatcher.ctrlId,
+						Timestamp:        time.Now(),
 						Version:          event.UsageEventsVersion,
 						EventType:        "usage." + usageType,
-						EventSrcId:       self.dispatcher.ctrlId,
 						SourceId:         message.SourceId,
 						CircuitId:        circuitId,
 						Usage:            usage,
@@ -191,9 +194,10 @@ func (self *usageEventAdapter) AcceptMetricsMsg(message *metrics_pb.MetricsMessa
 			for _, bucket := range interval.Buckets {
 				for circuitId, usage := range bucket.Values {
 					evt := &event.UsageEventV3{
-						Namespace:  event.UsageEventsNs,
-						Version:    3,
+						Namespace:  event.UsageEventNS,
 						EventSrcId: self.dispatcher.ctrlId,
+						Timestamp:  time.Now(),
+						Version:    3,
 						SourceId:   message.SourceId,
 						CircuitId:  circuitId,
 						Usage: map[string]uint64{
@@ -210,10 +214,11 @@ func (self *usageEventAdapter) AcceptMetricsMsg(message *metrics_pb.MetricsMessa
 		for _, interval := range message.UsageCounters {
 			for circuitId, bucket := range interval.Buckets {
 				evt := &event.UsageEventV3{
-					Namespace:        event.UsageEventsNs,
+					Namespace:        event.UsageEventNS,
+					EventSrcId:       self.dispatcher.ctrlId,
+					Timestamp:        time.Now(),
 					Version:          3,
 					SourceId:         message.SourceId,
-					EventSrcId:       self.dispatcher.ctrlId,
 					CircuitId:        circuitId,
 					Usage:            bucket.Values,
 					IntervalStartUTC: interval.IntervalStartUTC,

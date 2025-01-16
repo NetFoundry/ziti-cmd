@@ -202,7 +202,7 @@ func (self *terminatorEventAdapter) createTerminatorEvent(eventType event.Termin
 	}
 
 	evt := &event.TerminatorEvent{
-		Namespace:                 event.TerminatorEventsNs,
+		Namespace:                 event.TerminatorEventNS,
 		EventType:                 eventType,
 		EventSrcId:                self.Dispatcher.ctrlId,
 		Timestamp:                 time.Now(),

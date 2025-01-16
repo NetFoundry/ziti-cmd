@@ -23,6 +23,7 @@ import (
 	"github.com/pkg/errors"
 	"reflect"
 	"strings"
+	"time"
 )
 
 func (self *Dispatcher) AddServiceEventHandler(handler event.ServiceEventHandler) {
@@ -44,7 +45,7 @@ func (self *Dispatcher) AcceptServiceEvent(event *event.ServiceEvent) {
 func (self *Dispatcher) registerServiceEventHandler(val interface{}, _ map[string]interface{}) error {
 	handler, ok := val.(event.ServiceEventHandler)
 	if !ok {
-		return errors.Errorf("type %v doesn't implement github.com/openziti/edge/event/ServiceEventHandler interface.", reflect.TypeOf(val))
+		return errors.Errorf("type %v doesn't implement github.com/openziti/controller/event/ServiceEventHandler interface.", reflect.TypeOf(val))
 	}
 
 	self.AddServiceEventHandler(handler)
@@ -79,10 +80,11 @@ func (self *serviceEventAdapter) AcceptMetrics(message *metrics_pb.MetricsMessag
 					terminatorId = ids[1]
 				}
 				evt := &event.ServiceEvent{
-					Namespace:        "service.events",
+					Namespace:        event.ServiceEventNS,
+					EventSrcId:       self.ctrlId,
+					Timestamp:        time.Now(),
 					Version:          2,
 					EventType:        name,
-					EventSrcId:       self.ctrlId,
 					ServiceId:        serviceId,
 					TerminatorId:     terminatorId,
 					Count:            count,
