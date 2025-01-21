@@ -77,6 +77,7 @@ func (self *Dispatcher) sessionDeleted(session *db.Session) {
 		Timestamp:    time.Now(),
 		Token:        session.Token,
 		ApiSessionId: session.ApiSessionId,
+		IdentityId:   session.IdentityId,
 		ServiceId:    session.ServiceId,
 	}
 

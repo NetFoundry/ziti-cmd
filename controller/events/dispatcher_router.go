@@ -81,7 +81,7 @@ func (self *routerEventAdapter) RouterDisconnected(r *model.Router) {
 
 func (self *routerEventAdapter) routerChange(eventType event.RouterEventType, r *model.Router, online bool) {
 	evt := &event.RouterEvent{
-		Namespace:    event.RouterEventsNs,
+		Namespace:    event.RouterEventNS,
 		EventSrcId:   self.ctrlId,
 		EventType:    eventType,
 		Timestamp:    time.Now(),

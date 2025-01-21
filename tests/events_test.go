@@ -39,7 +39,7 @@ func (self *eventsCollector) acceptEvent(event interface{}) {
 	fmt.Printf("\nNEXT EVENT: %v: %v %+v\n", reflect.TypeOf(event), event, event)
 }
 
-func (self *eventsCollector) AcceptUsageEvent(event *event.UsageEvent) {
+func (self *eventsCollector) AcceptUsageEvent(event *event.UsageEventV2) {
 	self.acceptEvent(event)
 }
 
@@ -139,7 +139,7 @@ func Test_EventsTest(t *testing.T) {
 	timeout := time.Minute * 2
 	for i := 0; i < 3; i++ {
 		evt = ec.PopNextEvent(ctx, fmt.Sprintf("usage or circuits deleted %v", i+1), timeout)
-		if usage, ok := evt.(*event.UsageEvent); ok {
+		if usage, ok := evt.(*event.UsageEventV2); ok {
 			timeout = time.Second * 10
 			ctx.Req.Equal("fabric.usage", usage.Namespace)
 			ctx.Req.Equal(uint32(2), usage.Version)

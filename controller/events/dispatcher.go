@@ -54,17 +54,17 @@ func NewDispatcher(closeNotify <-chan struct{}) *Dispatcher {
 	}
 	result.entityChangeEventsDispatcher.dispatcher = result
 
-	result.RegisterEventTypeFunctions(event.CircuitEventsNs, result.registerCircuitEventHandler, result.unregisterCircuitEventHandler)
-	result.RegisterEventTypeFunctions(event.EntityChangeEventsNs, result.registerEntityChangeEventHandler, result.unregisterEntityChangeEventHandler)
-	result.RegisterEventTypeFunctions(event.LinkEventsNs, result.registerLinkEventHandler, result.unregisterLinkEventHandler)
-	result.RegisterEventTypeFunctions(event.MetricsEventsNs, result.registerMetricsEventHandler, result.unregisterMetricsEventHandler)
-	result.RegisterEventTypeFunctions(event.RouterEventsNs, result.registerRouterEventHandler, result.unregisterRouterEventHandler)
-	result.RegisterEventTypeFunctions(event.ServiceEventsNs, result.registerServiceEventHandler, result.unregisterServiceEventHandler)
-	result.RegisterEventTypeFunctions(event.TerminatorEventsNs, result.registerTerminatorEventHandler, result.unregisterTerminatorEventHandler)
-	result.RegisterEventTypeFunctions(event.UsageEventsNs, result.registerUsageEventHandler, result.unregisterUsageEventHandler)
-	result.RegisterEventTypeFunctions(event.ClusterEventsNs, result.registerClusterEventHandler, result.unregisterClusterEventHandler)
+	result.RegisterEventTypeFunctions(event.CircuitEventNS, result.registerCircuitEventHandler, result.unregisterCircuitEventHandler)
+	result.RegisterEventTypeFunctions(event.EntityChangeEventNS, result.registerEntityChangeEventHandler, result.unregisterEntityChangeEventHandler)
+	result.RegisterEventTypeFunctions(event.LinkEventNS, result.registerLinkEventHandler, result.unregisterLinkEventHandler)
+	result.RegisterEventTypeFunctions(event.MetricsEventNS, result.registerMetricsEventHandler, result.unregisterMetricsEventHandler)
+	result.RegisterEventTypeFunctions(event.RouterEventNS, result.registerRouterEventHandler, result.unregisterRouterEventHandler)
+	result.RegisterEventTypeFunctions(event.ServiceEventNS, result.registerServiceEventHandler, result.unregisterServiceEventHandler)
+	result.RegisterEventTypeFunctions(event.TerminatorEventNS, result.registerTerminatorEventHandler, result.unregisterTerminatorEventHandler)
+	result.RegisterEventTypeFunctions(event.UsageEventNS, result.registerUsageEventHandler, result.unregisterUsageEventHandler)
+	result.RegisterEventTypeFunctions(event.ClusterEventNS, result.registerClusterEventHandler, result.unregisterClusterEventHandler)
 	result.RegisterEventTypeFunctions(event.ConnectEventNS, result.registerConnectEventHandler, result.unregisterConnectEventHandler)
-	result.RegisterEventTypeFunctions(event.SdkEventsNs, result.registerSdkEventHandler, result.unregisterSdkEventHandler)
+	result.RegisterEventTypeFunctions(event.SdkEventNS, result.registerSdkEventHandler, result.unregisterSdkEventHandler)
 
 	result.RegisterEventTypeFunctions(event.ApiSessionEventNS, result.registerApiSessionEventHandler, result.unregisterApiSessionEventHandler)
 	result.RegisterEventTypeFunctions(event.EntityCountEventNS, result.registerEntityCountEventHandler, result.unregisterEntityCountEventHandler)
