@@ -57,7 +57,7 @@ function _check_command() {
     fi
 }
 
-declare -a BINS=(awk grep jq "${BUILD_DIR}/ziti")
+declare -a BINS=(awk grep jq "${BUILD_DIR}/ziti" xtail)
 for BIN in "${BINS[@]}"; do
     _check_command "$BIN"
 done
