@@ -1,4 +1,5 @@
 name: Test Quickstart
+
 on:
   workflow_dispatch:
   push:
@@ -122,3 +123,5 @@ jobs:
       - name: Build and run a three quickstart in HA mode
         shell: bash
         run: ./quickstart/test/ha-test.sh
+        env:
+          VERBOSE: 1

@@ -8,7 +8,7 @@ set -o pipefail
 # set defaults
 : "${BUILD_DIR:=./build}"
 : "${PFXLOG_NO_JSON:=true}"; export PFXLOG_NO_JSON  # disable JSON log format
-: "${VERBOSE:=1}"  # 0: no instance logs printed, 1: print instance logs to stdout
+: "${VERBOSE:=0}"  # 0: no instance logs printed, 1: print instance logs to stdout
 declare -a ctrl_ports=(2001 2002 2003)
 declare -a router_ports=(3001 3002 3003)
 : "${ziti_home:=$(mktemp -d)}"
@@ -57,7 +57,7 @@ function _check_command() {
     fi
 }
 
-declare -a BINS=(awk grep jq "${BUILD_DIR}/ziti")
+declare -a BINS=(awk grep jq "${BUILD_DIR}/ziti" xtail)
 for BIN in "${BINS[@]}"; do
     _check_command "$BIN"
 done
