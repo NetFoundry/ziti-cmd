@@ -768,14 +768,6 @@ main(){
         --selector app.kubernetes.io/component=controller \
         --timeout "${MINIZITI_TIMEOUT_SECS}s" >&3
 
-    logDebug "applying Custom Resource Definitions: Certificate, Issuer, and Bundle"
-    kubectlWrapper apply \
-        --filename https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml >&3
-    helmWrapper template trust-manager jetstack/trust-manager \
-        --version v0.16.0 --set crds.keep=false --show-only templates/crd-trust.cert-manager.io_bundles.yaml \
-    | yq 'del(.metadata.labels."app.kubernetes.io/managed-by") | del(.metadata.labels."helm.sh/chart")' \
-    | kubectlWrapper apply --filename - >&3
-
     declare -A HELM_REPOS
     HELM_REPOS[openziti]="openziti.io/helm-charts"
     HELM_REPOS[jetstack]="charts.jetstack.io"
@@ -789,6 +781,14 @@ main(){
             helmWrapper repo add "${REPO}" "https://${HELM_REPOS[${REPO}]}" >&3
         fi
     done
+
+    logDebug "applying Custom Resource Definitions: Certificate, Issuer, and Bundle"
+    kubectlWrapper apply \
+        --filename https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml >&3
+    helmWrapper template trust-manager jetstack/trust-manager \
+        --version v0.16.0 --set crds.keep=false --show-only templates/crd-trust.cert-manager.io_bundles.yaml \
+    | yq 'del(.metadata.labels."app.kubernetes.io/managed-by") | del(.metadata.labels."helm.sh/chart")' \
+    | kubectlWrapper apply --filename - >&3
 
     #
     ## Ensure OpenZiti Controller is Upgraded and Ready
