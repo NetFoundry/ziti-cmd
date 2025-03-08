@@ -768,12 +768,6 @@ main(){
         --selector app.kubernetes.io/component=controller \
         --timeout "${MINIZITI_TIMEOUT_SECS}s" >&3
 
-    logDebug "applying Custom Resource Definitions: Certificate, Issuer, and Bundle"
-    kubectlWrapper apply \
-        --filename https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml >&3
-    kubectlWrapper apply \
-        --filename https://raw.githubusercontent.com/cert-manager/trust-manager/v0.7.0/deploy/crds/trust.cert-manager.io_bundles.yaml >&3
-
     declare -A HELM_REPOS
     HELM_REPOS[openziti]="openziti.io/helm-charts"
     HELM_REPOS[jetstack]="charts.jetstack.io"
@@ -788,6 +782,14 @@ main(){
         fi
     done
 
+    logDebug "applying Custom Resource Definitions: Certificate, Issuer, and Bundle"
+    kubectlWrapper apply \
+        --filename https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml >&3
+    helmWrapper template trust-manager jetstack/trust-manager \
+        --version v0.16.0 --set crds.keep=false --show-only templates/crd-trust.cert-manager.io_bundles.yaml \
+    | yq 'del(.metadata.labels."app.kubernetes.io/managed-by") | del(.metadata.labels."helm.sh/chart")' \
+    | kubectlWrapper apply --filename - >&3
+
     #
     ## Ensure OpenZiti Controller is Upgraded and Ready
     #
@@ -801,8 +803,10 @@ main(){
         --namespace "${ZITI_NAMESPACE}" --create-namespace
         --set clientApi.advertisedHost="miniziti-controller.${MINIZITI_INGRESS_ZONE}"
         --set trust-manager.app.trust.namespace="${ZITI_NAMESPACE}"
-        --set trust-manager.enabled=true
-        --set cert-manager.enabled=true
+        --set cert-manager-enabled=true
+        --set cert-manager.namespace="${ZITI_NAMESPACE}"
+        --set trust-manager-enabled=true
+        --set trust-manager.namespace="${ZITI_NAMESPACE}"
         --values "${ZITI_CHARTS_URL}/ziti-controller/values-ingress-nginx.yaml"
         --set ctrlPlane.service.enabled=false
         --set ctrlPlane.ingress.enabled=false
